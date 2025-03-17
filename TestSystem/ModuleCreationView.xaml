@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="TestSystem.ModuleCreationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestSystem"
+             xmlns:vm="clr-namespace:TestSystem.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Background="White" >
+    <Grid>
+        <Grid.Resources>
+            <DataTemplate DataType="{x:Type vm:QuestionCreationViewModel}">
+                <local:QuestionCreationView/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Margin="5" Padding="5" VerticalAlignment="Top" Command="{Binding DeleteCommand}">-</Button>
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Foreground="{Binding Name.TextColor}"
+                               Text="{Binding Number, StringFormat='Название модуля №{0}'}"
+                               Margin="5"/>
+                    <TextBox Margin="5" BorderBrush="{Binding Name.FieldColor}" Text="{Binding Name.Text}"/>
+                    <Label>Вопросы:</Label>
+                    <ItemsControl ItemsSource="{Binding Questions}"/>
+                    <Button Margin="5"
+                            Padding="5"
+                            HorizontalAlignment="Left"
+                            Command="{Binding AddQuestionCommand}">Добавить вопрос</Button>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="↑"
+                            Padding="3"
+                            Margin="5"
+                            FontSize="18"
+                            MaxHeight="50"
+                            Command="{Binding MoveUpCommand}"/>
+                    <Button Grid.Row="1"
+                            Content="↓"
+                            Padding="3"
+                            Margin="5"
+                            FontSize="18"
+                            MaxHeight="50"
+                            Command="{Binding MoveDownCommand}"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

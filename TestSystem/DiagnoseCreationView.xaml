@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="TestSystem.DiagnoseCreationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestSystem"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Background="White">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Button Margin="5" Padding="5" VerticalAlignment="Top" Command="{Binding DeleteCommand}">-</Button>
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+            <StackPanel>
+                <Label Foreground="{Binding Name.TextColor}">Название диагноза:</Label>
+                <TextBox Margin="5"
+                     BorderBrush="{Binding Name.FieldColor}"
+                     Text="{Binding Name.Text}"/>
+                <Label Foreground="{Binding Recomendation.TextColor}">Рекомендация:</Label>
+                <TextBox Margin="5"
+                     BorderBrush="{Binding Recomendation.FieldColor}"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     Text="{Binding Recomendation.Text}"/>
+                <Label>Диапазон баллов:</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="{Binding ScoreFrom.TextColor}">От:</Label>
+                    <TextBox Margin="5"
+                         Width="100"
+                         BorderBrush="{Binding ScoreFrom.FieldColor}"
+                         Text="{Binding ScoreFrom.Text}"/>
+                    <Label Foreground="{Binding ScoreTo.TextColor}">До:</Label>
+                    <TextBox Margin="5"
+                         Width="100"
+                         BorderBrush="{Binding ScoreTo.FieldColor}"
+                         Text="{Binding ScoreTo.Text}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+    
+</UserControl>
