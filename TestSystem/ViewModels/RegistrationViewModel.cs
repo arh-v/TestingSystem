@@ -1,6 +1,5 @@
 ﻿using System.Windows.Input;
 using TestSystem.Database;
-using TestSystem.Managers;
 
 namespace TestSystem.ViewModels;
 
