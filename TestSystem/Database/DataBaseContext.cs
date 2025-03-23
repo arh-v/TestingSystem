@@ -34,7 +34,7 @@ public partial class DataBaseContext : DbContext
     public virtual DbSet<Test> Tests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlite("Data Source=G:\\магистратура\\СППР\\TestSystem\\TestSystem\\DataBase.db");
+        => optionsBuilder.UseSqlite("Data Source=DataBase.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

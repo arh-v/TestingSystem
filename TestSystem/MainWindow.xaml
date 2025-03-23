@@ -40,6 +40,9 @@
             <DataTemplate DataType="{x:Type vm:ReviewerMenuViewModel}">
                 <local:ReviewerMenuView/>
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:TestResultEditingViewModel}">
+                <local:TestResultEditingView/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:TestResultViewModel}">
                 <local:TestResultView/>
             </DataTemplate>

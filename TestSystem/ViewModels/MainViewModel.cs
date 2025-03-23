@@ -49,7 +49,7 @@ public class MainViewModel : ViewModel
     {
         var testingFormVm = new TestingFormViewModel(e.ParticipantFullname, e.TestId);
         CurrentContent = testingFormVm;
-        testingFormVm.OnFinish += ReturnToStartMenu;
+        testingFormVm.OnFinish += OpenTestResultViewer;
     }
 
     private void ReturnToStartMenu(object sender, EventArgs e)
@@ -60,6 +60,18 @@ public class MainViewModel : ViewModel
         }
 
         CurrentContent = StartMenuVm;
+    }
+
+    private void OpenTestResultViewer(object sender, TestingFormViewModel.FinishEventArgs e)
+    {
+        if (sender is IDisposable resource)
+        {
+            resource.Dispose();
+        }
+
+        var testResultViewer = new TestResultViewModel(e.FinishedTestId);
+        CurrentContent = testResultViewer;
+        testResultViewer.OnOk += ReturnToStartMenu;
     }
 
     private void GoFromRegistrationToLogin(object sender, RegistrationViewModel.RegisterEventArgs e)
@@ -91,7 +103,7 @@ public class MainViewModel : ViewModel
             var reviewerMenuVm = new ReviewerMenuViewModel(e.Login);
             CurrentContent = reviewerMenuVm;
             reviewerMenuVm.OnExit += ReturnToStartMenu;
-            reviewerMenuVm.OnResultOpening += OpenTestResultViewer;
+            reviewerMenuVm.OnResultOpening += OpenTestResultEditor;
         }
     }
 
@@ -124,19 +136,19 @@ public class MainViewModel : ViewModel
         ProvideAccessToSystem(sender, new(e.Username, true));
     }
 
-    private void OpenTestResultViewer(object sender, ReviewerMenuViewModel.OpenResultEventArgs e)
+    private void OpenTestResultEditor(object sender, ReviewerMenuViewModel.OpenResultEventArgs e)
     {
         if (sender is IDisposable resource)
         {
             resource.Dispose();
         }
 
-        var testResultViewer = new TestResultViewModel(e.FinishedTestId, e.ReviewerName);
+        var testResultViewer = new TestResultEditingViewModel(e.FinishedTestId, e.ReviewerName);
         CurrentContent = testResultViewer;
         testResultViewer.OnCancel += ReturnToReviewerMenu;
     }
 
-    private void ReturnToReviewerMenu(object sender, TestResultViewModel.CancelEventArgs e)
+    private void ReturnToReviewerMenu(object sender, TestResultEditingViewModel.CancelEventArgs e)
     {
         ProvideAccessToSystem(sender, new(e.Username, false));
     }

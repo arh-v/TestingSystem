@@ -23,7 +23,7 @@ class TestingFormViewModel : ViewModel, IDisposable
 
     public ICommand FinishCommand { get; }
 
-    public EventHandler OnFinish;
+    public EventHandler<FinishEventArgs> OnFinish;
 
     public TestingFormViewModel(string participantFullname, int testId)
     {
@@ -55,7 +55,7 @@ class TestingFormViewModel : ViewModel, IDisposable
             .Select(ms =>
             {
                 var m = ms.module;
-                var recomendations = DiagnoseSelector(Entity.Diagnoses, ms.score);
+                var recomendations = GetRecomendations(Entity.Diagnoses, ms.score);
                 return new FinishedModule(m.Name, m.Number, recomendations, ms.score);
             });
 
@@ -66,11 +66,11 @@ class TestingFormViewModel : ViewModel, IDisposable
 
         _db.FinishedTests.Add(finishedTest);
         _db.SaveChanges();
-        OnFinish?.Invoke(this, EventArgs.Empty);
+        OnFinish?.Invoke(this, new(finishedTest.Id));
         SelectedTabIndex = -1; //чтобы не возникали ошибки привязки
     }
 
-    private string DiagnoseSelector(ICollection<Diagnose> diagnoses, int score)
+    private string GetRecomendations(ICollection<Diagnose> diagnoses, int score)
     {
         var sb = new StringBuilder();
 
@@ -82,6 +82,11 @@ class TestingFormViewModel : ViewModel, IDisposable
         }
 
         return sb.ToString();
+    }
+
+    public class FinishEventArgs(int finishedTestId) : EventArgs
+    {
+        public int FinishedTestId { get; } = finishedTestId;
     }
 
     public void Dispose()

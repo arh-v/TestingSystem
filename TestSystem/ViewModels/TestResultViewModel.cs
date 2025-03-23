@@ -4,66 +4,25 @@ using TestSystem.Database;
 
 namespace TestSystem.ViewModels;
 
-class TestResultViewModel : ViewModel, IDisposable
+class TestResultViewModel : ViewModel
 {
-    private bool _disposed = false;
-    private DataBaseContext _db = new();
-    private string _reviewerName;
-
     public FinishedTest Entity { get; }
 
-    public ICommand SaveCommand { get; }
+    public ICommand OkCommand { get; }
 
-    public ICommand CancelCommand { get; }
+    public EventHandler OnOk;
 
-    public EventHandler<CancelEventArgs> OnCancel;
-
-    public TestResultViewModel(int finishedTestId, string reviewerName)
+    public TestResultViewModel(int finishedTestId)
     {
-        _reviewerName = reviewerName;
-        Entity = (from test in _db.FinishedTests.Include(test => test.FinishedModules)
+        using var db = new DataBaseContext();
+
+        Entity = (from test in db.FinishedTests.Include(test => test.FinishedModules)
                   where test.Id == finishedTestId
                   select test).FirstOrDefault();
 
         if (Entity == null) throw new ArgumentException(nameof(finishedTestId));
 
-        SaveCommand = new RelayCommand(Save);
-        CancelCommand = new RelayCommand(() => OnCancel?.Invoke(this, new(_reviewerName)));
-        _reviewerName = reviewerName;
-    }
-
-    private void Save()
-    {
-        _db.SaveChanges();
-        OnCancel?.Invoke(this, new(_reviewerName));
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (_disposed) return;
-
-        if (disposing)
-        {
-            _db.Dispose();
-        }
-
-        _disposed = true;
-    }
-
-    public class CancelEventArgs(string username) : EventArgs
-    {
-        public string Username { get; } = username;
-    }
-
-    ~TestResultViewModel()
-    {
-        Dispose(false);
+        OkCommand = new RelayCommand(() => OnOk?.Invoke(this, EventArgs.Empty));
     }
 }
 

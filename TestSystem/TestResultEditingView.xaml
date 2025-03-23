@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="TestSystem.TestResultView"
+﻿<UserControl x:Class="TestSystem.TestResultEditingView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,12 +14,12 @@
         </Grid.RowDefinitions>
 
         <StackPanel Margin="5">
-            <TextBlock>Просмотр результатов тестирования.</TextBlock>
-            <TextBlock>
+            <TextBlock  TextWrapping="Wrap" Text="Просмотр результатов тестирования."></TextBlock>
+            <TextBlock TextWrapping="Wrap" HorizontalAlignment="Left">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="Название тестирования: {0}
-                                            Автор: {1}
-                                            ФИО участника тестирования: {2}">
+                                                Автор: {1}
+                                                ФИО участника тестирования: {2}">
                         <Binding Path="Entity.Name"/>
                         <Binding Path="Entity.Author"/>
                         <Binding Path="Entity.ParticipantFullname"/>
@@ -45,19 +45,20 @@
                                         </TextBlock.Text>
                                     </TextBlock>
                                 </GroupBox.Header>
-                                <TextBlock TextWrapping="Wrap" Text="{Binding Recomendations}"/>
+                                <TextBox Margin="5"
+                                         Text="{Binding Recomendations}"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"/>
                             </GroupBox>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </GroupBox>
         </ScrollViewer>
-        
-        <Button Grid.Row="2"
-                Width="100"
-                Margin="5"
-                Padding="5"
-                Command="{Binding OkCommand}"
-                HorizontalAlignment="Left">ОК</Button>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Margin="5" Padding="5" Command="{Binding SaveCommand}">Сохранить</Button>
+            <Button Margin="5" Padding="5" Command="{Binding CancelCommand}">Отмена</Button>
+        </StackPanel>
     </Grid>
 </UserControl>
