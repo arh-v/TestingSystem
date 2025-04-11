@@ -89,22 +89,32 @@ class ReviewerMenuViewModel : ViewModel, IDisposable
         if (saveFileDialog.ShowDialog() != true) return;
 
         var filePath = saveFileDialog.FileName;
+        var forms = (from t in _db.FinishedTests.Include(test => test.FinishedModules)
+                    where t.Id == _testsResults[SelectedResultIndex].Id
+                    select t).ToList();
 
-        var modules = (from test in _db.FinishedTests.Include(test => test.FinishedModules)
-                     where test.Id == _testsResults[SelectedResultIndex].Id
-                     select test)
-                    .SelectMany(test => test.FinishedModules).ToList();
-        var lines = modules.Where(m => !string.IsNullOrEmpty(m.Recomendations))
+        if (forms.Count == 0) return;
+
+        var form = forms[0];
+        var modules = form.FinishedModules;
+        var recomendations = modules.Where(m => !string.IsNullOrEmpty(m.Recomendations))
                     .SelectMany(m => m.Recomendations
                         .Split(["\r\n", "\n"], StringSplitOptions.None))
                     .ToList();
-
+        var metadata = new List<string>()
+        {
+            $"Название анкеты: {form.Name}",
+            $"Автор: {form.Author}",
+            $"Имя участника: {form.ParticipantFullname}",
+            $"Дата прохождения: {form.FinishDate}"
+        };
+        var lines = metadata.Concat(recomendations);
         using var myDocument = WordprocessingDocument.Create(filePath, WordprocessingDocumentType.Document);
         var mainPart = myDocument.AddMainDocumentPart();
         mainPart.Document = new Document();
         var body = mainPart.Document.AppendChild(new Body());
-        
-        foreach ( var line in lines)
+
+        foreach (var line in lines)
         {
             var paragraf = body.AppendChild(new Paragraph());
             var run = paragraf.AppendChild(new Run());

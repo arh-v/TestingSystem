@@ -11,10 +11,21 @@ class TestCreationViewModel : ViewModel, IDisposable
     private ObservableCollection<DiagnoseCreationViewModel> _diagnoses = [];
     private DataBaseContext _db = new();
     private bool _disposed = false;
+    private string _message;
 
     public Test Entity { get; }
 
     public TextField<string> Name { get; set; }
+
+    public string Message
+    {
+        get => _message;
+        set
+        {
+            _message = value;
+            OnPropertyChanged();
+        }
+    }
 
     public IReadOnlyCollection<ModuleCreationViewModel> Modules => _modules;
 
@@ -62,8 +73,8 @@ class TestCreationViewModel : ViewModel, IDisposable
                           .ThenInclude(m => m.Questions.OrderBy(q => q.Number))
                           .ThenInclude(q => q.Answers)
                           .Include(t => t.Diagnoses)
-                  where test.Id == testId
-                  select test).FirstOrDefault();
+                      where test.Id == testId
+                      select test).FirstOrDefault();
 
         if (entity == null) throw new ArgumentException(nameof(testId));
 
@@ -164,7 +175,7 @@ class TestCreationViewModel : ViewModel, IDisposable
         {
             _db.Tests.Add(Entity);
         }
-        
+
         _db.SaveChanges();
         OnCancel.Invoke(this, new(Entity.Author));
     }
@@ -173,15 +184,42 @@ class TestCreationViewModel : ViewModel, IDisposable
     {
         foreach (var module in _modules)
         {
-            if (!module.CheckDataIsCorrect()) return false;
+            if (!module.CheckDataIsCorrect())
+            {
+                Message = "Модули заполнены неправильно!" + 
+                    " Проверьте правильность заполнения: должно быть не меньше двух вопросов";
+                return false;
+            }
         }
 
         foreach (var diagnose in _diagnoses)
         {
-            if (!diagnose.CheckDataIsCorrect()) return false;
+            if (!diagnose.CheckDataIsCorrect())
+            {
+                Message = "Диагнозы заполнены неправильно!";
+                return false;
+            }
         }
 
-        return _modules.Count >= 1 && _diagnoses.Count >= 1 && Name.IsCorrect;
+        if (_modules.Count < 1)
+        {
+            Message = "Должно быть не меньше одного модуля!";
+            return false;
+        }
+
+        if (_diagnoses.Count < 2)
+        {
+            Message = "Должно быть не меньше одного диагноза";
+            return false;
+        }
+
+        if (!Name.IsCorrect)
+        {
+            Message = "Назовите анкету!";
+            return false;
+        }
+
+        return true;
     }
 
     public void Dispose()

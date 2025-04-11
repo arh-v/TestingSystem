@@ -25,7 +25,7 @@ class DiagnoseCreationViewModel : ViewModel
     public DiagnoseCreationViewModel(Diagnose diagnose)
     {
         Entity = diagnose ?? new();
-        Name = new(Entity, p => p != null, nameof(Entity.Name));
+        Name = new(Entity, p => p != "", nameof(Entity.Name));
         Recomendation = new(Entity, p => p != null, nameof(Entity.Recomendation));
         ScoreFrom = new(Entity, nameof(Entity.ScoreFrom));
         ScoreTo = new(Entity, nameof(Entity.ScoreTo));
@@ -47,6 +47,13 @@ class DiagnoseCreationViewModel : ViewModel
 
     public bool CheckDataIsCorrect()
     {
+        if (Entity.ScoreFrom > Entity.ScoreTo)
+        {
+            ScoreFrom.SetWarningColor();
+            return false;
+        }
+
+        ScoreTo.SetDefaultColor();
         return Name.IsCorrect && Recomendation.IsCorrect && ScoreFrom.IsCorrect && ScoreTo.IsCorrect;
     }
 }
